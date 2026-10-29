@@ -10,10 +10,10 @@ effective interval is half-open. Convert only at the integration boundary.
 
 from __future__ import annotations
 
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from datetime import date, timedelta
 from types import MappingProxyType
-from typing import Iterable, Mapping
 from uuid import UUID
 
 from pyaccountingkit.core.errors import EntityScopeMismatchError
