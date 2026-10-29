@@ -72,13 +72,9 @@ class CompanyConfigurationEntityBridge:
                 raise ValueError("Accounting EntityId cannot alias another legal scope")
             by_scope[scope] = binding.accounting_entity_id
             by_accounting_id[accounting_id] = scope
-        self._by_scope: Mapping[tuple[str, UUID, UUID], EntityId] = MappingProxyType(
-            by_scope
-        )
+        self._by_scope: Mapping[tuple[str, UUID, UUID], EntityId] = MappingProxyType(by_scope)
 
-    def resolve(
-        self, *, tenant_id: str, company_id: UUID, legal_entity_id: UUID
-    ) -> EntityId:
+    def resolve(self, *, tenant_id: str, company_id: UUID, legal_entity_id: UUID) -> EntityId:
         """Resolve an existing historical ID or fail closed without a fallback."""
         _required_text(tenant_id, "tenant_id")
         if type(company_id) is not UUID or type(legal_entity_id) is not UUID:
