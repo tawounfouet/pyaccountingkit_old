@@ -92,11 +92,17 @@ def test_duplicate_or_cross_tenant_legacy_alias_rejected(bindings) -> None:
         CompanyConfigurationEntityBridge(bindings(binding))
 
 
-@pytest.mark.parametrize("field,value", [
-    ("tenant_id", " "), ("tenant_id", "tenant-a "),
-    ("accounting_entity_id", EntityId(" ")), ("evidence_ref", ""),
-    ("company_id", "not-a-uuid"), ("legal_entity_id", "not-a-uuid"),
-])
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("tenant_id", " "),
+        ("tenant_id", "tenant-a "),
+        ("accounting_entity_id", EntityId(" ")),
+        ("evidence_ref", ""),
+        ("company_id", "not-a-uuid"),
+        ("legal_entity_id", "not-a-uuid"),
+    ],
+)
 def test_invalid_mapping_is_rejected(field: str, value: object) -> None:
     binding = _binding()
     from dataclasses import replace
@@ -110,10 +116,14 @@ def test_bindings_are_frozen_and_input_mutations_do_not_change_registry() -> Non
     supplied = [binding]
     bridge = CompanyConfigurationEntityBridge(supplied)
     supplied.clear()
-    assert bridge.resolve(
-        tenant_id=binding.tenant_id, company_id=binding.company_id,
-        legal_entity_id=binding.legal_entity_id,
-    ) == binding.accounting_entity_id
+    assert (
+        bridge.resolve(
+            tenant_id=binding.tenant_id,
+            company_id=binding.company_id,
+            legal_entity_id=binding.legal_entity_id,
+        )
+        == binding.accounting_entity_id
+    )
     with pytest.raises(FrozenInstanceError):
         binding.tenant_id = "tenant-other"
 
@@ -165,9 +175,7 @@ def test_reject_datetime_or_wrong_period_input() -> None:
     with pytest.raises(ValueError):
         LegacyPeriodBounds(date(2026, 2, 1), date(2026, 2, 1))
     with pytest.raises(ValueError):
-        LegacyPeriodBounds(date(2026, 1, 1), date(2026, 2, 1)).contains(
-            datetime(2026, 1, 10)
-        )
+        LegacyPeriodBounds(date(2026, 1, 1), date(2026, 2, 1)).contains(datetime(2026, 1, 10))
 
 
 def test_legacy_root_exports_still_match_previous_manifest() -> None:
